@@ -52,11 +52,47 @@ class _IngredientsState extends State<Ingredients> {
                 Ingredient ingredient = snapshot.data![index];
                 return Card(
                   child: ListTile(
+                    key: ValueKey(ingredient.id),
                     // leading: Text(ingredient.id.toString()),
                     title: Text(ingredient.name),
                     subtitle: Text(
                         'Quantity: ${ingredient.quantity} ${ingredient.unit}'),
                     trailing: Text("Price: R\$ ${ingredient.value.toString()}"),
+                    onTap: () {
+                      print(ingredient.id);
+                      showMenu(
+                        context: context,
+                        position: RelativeRect.fromLTRB(
+                          MediaQuery.of(context).size.width / 2,
+                          MediaQuery.of(context).size.height / 2,
+                          0,
+                          0,
+                        ),
+                        items: [
+                          PopupMenuItem(
+                            child: Text('Edit'),
+                            value: 'edit',
+                          ),
+                          PopupMenuItem(
+                            child: Text('Delete'),
+                            value: 'delete',
+                          ),
+                        ],
+                      ).then((value) {
+                        if (value == 'edit') {
+                          showDialog(
+                            context: context,
+                            builder: (context) => RegisterIngredient(),
+                          );
+                        } else if (value == 'delete') {
+                          ingredientService.deleteIngredient(ingredient.id);
+                          setState(() {
+                            futureIngredients =
+                                ingredientService.fetchIngredients();
+                          });
+                        }
+                      });
+                    },
                   ),
                 );
               },
