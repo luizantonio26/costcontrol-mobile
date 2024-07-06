@@ -14,7 +14,7 @@ class Ingredient {
 
   @override
   String toString() {
-    return 'Ingredient{id: $id, name: $name, value: $value, quantity: $quantity, unit: $unit}';
+    return '$name ($unit)';
   }
 
   factory Ingredient.fromJson(Map<String, dynamic> json) {
