@@ -3,6 +3,7 @@ import 'package:mobile/pages/home.dart';
 import 'package:mobile/pages/otpCodePage.dart';
 import 'package:mobile/pages/signin.dart';
 import 'package:mobile/services/auth.dart';
+import 'package:mobile/widgets/app_bar.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -74,13 +75,14 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Cost Control",
-          style: TextStyle(color: Colors.white, fontSize: 26),
-        ),
-        backgroundColor: Colors.deepPurple[600],
-      ),
+      // appBar: AppBar(
+      //   title: const Text(
+      //     "Cost Control",
+      //     style: TextStyle(color: Colors.white, fontSize: 26),
+      //   ),
+      //   backgroundColor: Colors.deepPurple[600],
+      // ),
+      appBar: CustomAppBar(isLogin: true),
       body: Center(
         child: Padding(
           padding: EdgeInsets.all(25),

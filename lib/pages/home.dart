@@ -4,6 +4,7 @@ import 'package:mobile/pages/login.dart';
 import 'package:mobile/pages/profile.dart';
 import 'package:mobile/pages/recipes.dart';
 import 'package:mobile/services/auth.dart';
+import 'package:mobile/widgets/app_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -39,21 +40,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Cost Control",
-          style: TextStyle(color: Colors.white, fontSize: 26),
-        ),
-        backgroundColor: Colors.deepPurple[600],
-        actions: <Widget>[
-          IconButton(
-              onPressed: _logout,
-              icon: Icon(
-                Icons.logout,
-                color: Colors.white,
-              ))
-        ],
-      ),
+      appBar: CustomAppBar(isLogin: false),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.deepPurple[600],
         elevation: 0,

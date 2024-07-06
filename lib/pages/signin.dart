@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile/pages/home.dart';
-import 'package:mobile/services/auth.dart'; // For formatting dates
+import 'package:mobile/services/auth.dart';
+import 'package:mobile/widgets/app_bar.dart'; // For formatting dates
 
 class SigninPage extends StatefulWidget {
   const SigninPage({super.key});
@@ -130,17 +131,7 @@ class _SigninPageState extends State<SigninPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Cost Control",
-          style: TextStyle(color: Colors.white, fontSize: 26),
-        ),
-        backgroundColor: Colors.deepPurple[600],
-        automaticallyImplyLeading: false,
-        iconTheme: IconThemeData(
-          color: Colors.white, // Cor do botão de voltar
-        ),
-      ),
+      appBar: CustomAppBar(isLogin: false),
       body: Center(
         child: Padding(
           padding: EdgeInsets.all(25),
