@@ -14,7 +14,7 @@ class IngredientService {
   Future<void> deleteIngredient(int id) async {
     try {
       Response response = await _dio.delete(
-        "$baseUrl/ingredient/$id/",
+        "$baseUrl/ingredient/$id",
         options: Options(
           headers: {
             "Content-Type": "application/json",
@@ -22,6 +22,38 @@ class IngredientService {
         ),
       );
       if (response.statusCode == 204) {
+        return response.data;
+      } else {
+        return response.data;
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception(e.response?.data['detail']);
+      } else {
+        throw Exception(e.message);
+      }
+    }
+  }
+
+  Future<void> updateIngredient(
+      int id, String name, double quantity, String unit, double value) async {
+    try {
+      Response response = await _dio.put(
+        "$baseUrl/ingredient/$id",
+        data: {
+          "name": name,
+          "quantity": quantity,
+          "unit": unit,
+          "value": value
+        },
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
         return response.data;
       } else {
         return response.data;

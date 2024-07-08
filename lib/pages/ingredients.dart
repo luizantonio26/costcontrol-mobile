@@ -36,6 +36,8 @@ class _IngredientsState extends State<Ingredients> {
             });
           });
         },
+        tooltip: 'Add Ingredient',
+        mini: true,
         foregroundColor: Colors.deepPurple[100],
         backgroundColor: Colors.deepPurple[600],
         child: const Icon(Icons.add),
@@ -51,48 +53,79 @@ class _IngredientsState extends State<Ingredients> {
               itemBuilder: (context, index) {
                 Ingredient ingredient = snapshot.data![index];
                 return Card(
+                  margin: EdgeInsets.only(left: 20, right: 20),
                   child: ListTile(
                     key: ValueKey(ingredient.id),
                     // leading: Text(ingredient.id.toString()),
                     title: Text(ingredient.name),
                     subtitle: Text(
-                        'Quantity: ${ingredient.quantity} ${ingredient.unit}'),
-                    trailing: Text("Price: R\$ ${ingredient.value.toString()}"),
-                    onTap: () {
-                      print(ingredient.id);
-                      showMenu(
-                        context: context,
-                        position: RelativeRect.fromLTRB(
-                          MediaQuery.of(context).size.width / 2,
-                          MediaQuery.of(context).size.height / 2,
-                          0,
-                          0,
-                        ),
-                        items: [
-                          PopupMenuItem(
-                            child: Text('Edit'),
-                            value: 'edit',
-                          ),
-                          PopupMenuItem(
-                            child: Text('Delete'),
-                            value: 'delete',
-                          ),
-                        ],
-                      ).then((value) {
-                        if (value == 'edit') {
-                          showDialog(
-                            context: context,
-                            builder: (context) => RegisterIngredient(),
-                          );
-                        } else if (value == 'delete') {
-                          ingredientService.deleteIngredient(ingredient.id);
-                          setState(() {
-                            futureIngredients =
-                                ingredientService.fetchIngredients();
-                          });
+                        'Quantity: ${ingredient.quantity} ${ingredient.unit} \nPrice: R\$ ${ingredient.value.toStringAsFixed(2)}'),
+                    trailing: PopupMenuButton<String>(
+                      onSelected: (String result) {
+                        switch (result) {
+                          case 'edit':
+                            // Adicione a lógica de edição aqui
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return RegisterIngredient(
+                                  ingredient: ingredient,
+                                );
+                              },
+                            ).then((_) {
+                              setState(() {
+                                futureIngredients =
+                                    ingredientService.fetchIngredients();
+                              });
+                            });
+                            break;
+                          case 'delete':
+                            // Adicione a lógica de exclusão aqui
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('Confirm deletion'),
+                                  content: Text(
+                                      'Are you sure you want to delete ${ingredient.name}?'),
+                                  actions: [
+                                    TextButton(
+                                      child: Text('Cancel'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                    TextButton(
+                                      child: Text('Delete'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        ingredientService
+                                            .deleteIngredient(ingredient.id);
+                                        setState(() {
+                                          futureIngredients = ingredientService
+                                              .fetchIngredients();
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                            break;
                         }
-                      });
-                    },
+                      },
+                      itemBuilder: (BuildContext context) =>
+                          <PopupMenuEntry<String>>[
+                        PopupMenuItem<String>(
+                          value: 'edit',
+                          child: Text('Edit'),
+                        ),
+                        PopupMenuItem<String>(
+                          value: 'delete',
+                          child: Text('Delete'),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },

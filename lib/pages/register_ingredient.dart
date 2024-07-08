@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/models/ingredient.dart';
 import 'package:mobile/services/ingredient_service.dart';
 
 class RegisterIngredient extends StatefulWidget {
-  const RegisterIngredient({super.key});
+  final Ingredient? ingredient;
+
+  const RegisterIngredient({super.key, this.ingredient});
+
+  //@override
+  // State<RegisterIngredient> createState() => _RegisterIngredientState();
+  //const RegisterIngredient({super.key, });
 
   @override
   State<RegisterIngredient> createState() => _RegisterIngredientState();
@@ -10,10 +17,10 @@ class RegisterIngredient extends StatefulWidget {
 
 class _RegisterIngredientState extends State<RegisterIngredient> {
   IngredientService ingredientService = IngredientService();
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _quantityController = TextEditingController();
-  TextEditingController _unitController = TextEditingController();
-  TextEditingController _priceController = TextEditingController();
+  late TextEditingController _nameController;
+  late TextEditingController _quantityController;
+  late TextEditingController _unitController;
+  late TextEditingController _priceController;
 
   void _register() async {
     print(_nameController.text);
@@ -41,9 +48,43 @@ class _RegisterIngredientState extends State<RegisterIngredient> {
     }
   }
 
+  void _update() async {
+    if (_nameController.text.isEmpty ||
+        _quantityController.text.isEmpty ||
+        _unitController.text.isEmpty ||
+        _priceController.text.isEmpty) {
+      return;
+    }
+
+    try {
+      await ingredientService.updateIngredient(
+          widget.ingredient!.id,
+          _nameController.text,
+          double.parse(_quantityController.text),
+          _unitController.text,
+          double.parse(_priceController.text));
+      Navigator.pop(context);
+      return;
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+
+    _nameController = TextEditingController();
+    _quantityController = TextEditingController();
+    _unitController = TextEditingController();
+    _priceController = TextEditingController();
+
+    if (widget.ingredient != null) {
+      _nameController.text = widget.ingredient!.name;
+      _quantityController.text = widget.ingredient!.quantity.toString();
+      _unitController.text = widget.ingredient!.unit;
+      _priceController.text = widget.ingredient!.value.toString();
+    }
   }
 
   Widget build(BuildContext context) {
@@ -60,7 +101,9 @@ class _RegisterIngredientState extends State<RegisterIngredient> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      "Register",
+                      widget.ingredient == null
+                          ? "Register Ingredient"
+                          : "Update Ingredient",
                       style: TextStyle(fontSize: 24),
                     ),
                     SizedBox(height: 8),
@@ -92,7 +135,8 @@ class _RegisterIngredientState extends State<RegisterIngredient> {
                       style: ButtonStyle(
                           backgroundColor:
                               WidgetStatePropertyAll(Colors.deepPurple[400])),
-                      onPressed: _register,
+                      onPressed:
+                          widget.ingredient == null ? _register : _update,
                     ),
                   ],
                 ),
