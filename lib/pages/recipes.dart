@@ -87,8 +87,70 @@ class _RecipesState extends State<Recipes> {
                     title: Text(recipe.name),
                     subtitle: Text(
                         'Prep Time: ${recipe.prepTime}\nServings: ${recipe.servings}\nCost: \$${recipe.recipeCost.toStringAsFixed(2)}\nCost per Unit: \$${recipe.recipeCostPerUnit.toStringAsFixed(2)}'),
-                    trailing:
-                        Text('${recipe.createdAt.toLocal()}'.split(' ')[0]),
+                    trailing: PopupMenuButton<String>(
+                      onSelected: (String result) {
+                        switch (result) {
+                          case 'edit':
+                            // Adicione a lógica de edição aqui
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return RegisterRecipe(
+                                  recipe: recipe,
+                                );
+                              },
+                            ).then((_) {
+                              setState(() {
+                                futureRecipes = recipeService.fetchRecipes();
+                              });
+                            });
+                            break;
+                          case 'delete':
+                            // Adicione a lógica de exclusão aqui
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('Confirm deletion'),
+                                  content: Text(
+                                      'Are you sure you want to delete ${recipe.name}?'),
+                                  actions: [
+                                    TextButton(
+                                      child: Text('Cancel'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                    TextButton(
+                                      child: Text('Delete'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        recipeService.deleteRecipe(recipe.id);
+                                        setState(() {
+                                          futureRecipes =
+                                              recipeService.fetchRecipes();
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                            break;
+                        }
+                      },
+                      itemBuilder: (BuildContext context) =>
+                          <PopupMenuEntry<String>>[
+                        PopupMenuItem<String>(
+                          value: 'edit',
+                          child: Text('Edit'),
+                        ),
+                        PopupMenuItem<String>(
+                          value: 'delete',
+                          child: Text('Delete'),
+                        ),
+                      ],
+                    ),
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (_) => RecipeDetail(id: recipe.id)));

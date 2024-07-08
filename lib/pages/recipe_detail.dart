@@ -91,6 +91,7 @@ class _RecipeDetailState extends State<RecipeDetail> {
                   ),
                   const SizedBox(height: 8),
                   ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: recipe.ingredients!.length,
                     itemBuilder: (context, index) {
@@ -100,6 +101,8 @@ class _RecipeDetailState extends State<RecipeDetail> {
                       Map<String, dynamic> ingredient =
                           recipe.ingredients![index];
                       return Card(
+                        margin: EdgeInsets.only(
+                            bottom: 8, top: 8, left: 20, right: 20),
                         child: ListTile(
                           title: Text(
                             ingredient['ingredients']['name'],
@@ -128,6 +131,7 @@ class _RecipeDetailState extends State<RecipeDetail> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        mini: true,
         onPressed: () {
           showDialog(
             context: context,

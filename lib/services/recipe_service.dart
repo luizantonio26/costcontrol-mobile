@@ -73,6 +73,65 @@ class RecipeService {
     }
   }
 
+  Future<void> updateIngredient(int id, double quantity) async {
+    final String baseUrl = "http://192.168.0.189:8000";
+    final _dio = Dio(BaseOptions(validateStatus: (status) => status! < 500));
+    final token = await getUserToken();
+
+    try {
+      Response response = await _dio.put(
+        "$baseUrl/recipe_ingredients/$id/",
+        data: {"quantity": quantity},
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer ${token}",
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        return;
+      } else {
+        return;
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception(e.response?.data['detail']);
+      } else {
+        throw Exception(e.message);
+      }
+    }
+  }
+
+  Future<void> deleteIngredient(int id) async {
+    final String baseUrl = "http://192.168.0.189:8000";
+    final _dio = Dio(BaseOptions(validateStatus: (status) => status! < 500));
+    final token = await getUserToken();
+
+    try {
+      Response response = await _dio.delete(
+        "$baseUrl/recipe_ingredients/$id/",
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer ${token}",
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        return;
+      } else {
+        return;
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception(e.response?.data['detail']);
+      } else {
+        throw Exception(e.message);
+      }
+    }
+  }
+
   Future<List<Recipe>> fetchRecipes() async {
     final String baseUrl = "http://192.168.0.189:8000";
     final _dio = Dio(BaseOptions(validateStatus: (status) => status! < 500));
@@ -110,7 +169,7 @@ class RecipeService {
 
     try {
       Response response = await _dio.delete(
-        "$baseUrl/recipe/$id/",
+        "$baseUrl/recipe/$id",
         options: Options(
           headers: {
             "Content-Type": "application/json",
@@ -155,6 +214,40 @@ class RecipeService {
         ),
       );
       if (response.statusCode == 201) {
+        return;
+      } else {
+        return;
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception(e.response?.data['detail']);
+      } else {}
+    }
+  }
+
+  Future<void> updateRecipe(int id, String name, String prepTime, int servings,
+      dynamic? base64Image) async {
+    final String baseUrl = "http://192.168.0.189:8000";
+    final _dio = Dio(BaseOptions(validateStatus: (status) => status! < 500));
+    final token = await getUserToken();
+
+    try {
+      Response response = await _dio.put(
+        "$baseUrl/recipe/$id",
+        data: {
+          "name": name,
+          "prep_time": prepTime,
+          "servings": servings,
+          "image_url": base64Image
+        },
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer ${token}",
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
         return;
       } else {
         return;

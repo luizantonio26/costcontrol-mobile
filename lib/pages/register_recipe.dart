@@ -3,10 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mobile/models/recipe.dart';
 import 'package:mobile/services/recipe_service.dart';
 
 class RegisterRecipe extends StatefulWidget {
-  const RegisterRecipe({super.key});
+  late Recipe? recipe;
+  RegisterRecipe({super.key, this.recipe});
 
   @override
   State<RegisterRecipe> createState() => _RegisterRecipeState();
@@ -66,9 +68,44 @@ class _RegisterRecipeState extends State<RegisterRecipe> {
     }
   }
 
+  void _update() async {
+    var base64Image = "";
+    if (_image != null) {
+      final bytes = await _image!.readAsBytes();
+      base64Image = base64Encode(bytes);
+      print('Base64 image: $base64Image');
+    }
+
+    if (_nameController.text.isEmpty ||
+        _prepTimeController.text.isEmpty ||
+        _servingsController.text.isEmpty) {
+      return;
+    }
+
+    try {
+      await recipeService.updateRecipe(
+        widget.recipe!.id,
+        _nameController.text,
+        _prepTimeController.text,
+        int.parse(_servingsController.text),
+        base64Image,
+      );
+      Navigator.pop(context);
+      return;
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+
+    if (widget.recipe != null) {
+      _nameController.text = widget.recipe!.name;
+      _prepTimeController.text = widget.recipe!.prepTime.toString();
+      _servingsController.text = widget.recipe!.servings.toString();
+    }
   }
 
   @override
@@ -117,13 +154,15 @@ class _RegisterRecipeState extends State<RegisterRecipe> {
                     SizedBox(height: 20),
                     ElevatedButton(
                       child: Text(
-                        "Register",
+                        widget.recipe == null
+                            ? "Register Recipe"
+                            : "Edit Recipe",
                         style: TextStyle(color: Colors.deepPurple[100]),
                       ),
                       style: ButtonStyle(
                           backgroundColor:
                               WidgetStatePropertyAll(Colors.deepPurple[400])),
-                      onPressed: _register,
+                      onPressed: widget.recipe == null ? _register : _update,
                     ),
                   ],
                 ),
